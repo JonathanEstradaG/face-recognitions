@@ -1,0 +1,22 @@
+{
+  "name": "face-api",
+  "version": "1.0.0",
+  "description": "App de reconocimineto facial",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -w",
+    "dev": "nodemon build/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/morgan": "^1.9.4",
+    "nodemon": "^3.0.1"
+  }
+}
