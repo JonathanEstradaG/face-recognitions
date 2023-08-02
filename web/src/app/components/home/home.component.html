@@ -1,8 +1,40 @@
 <mat-toolbar color="primary">
     <mat-toolbar-row>
-        <span>Second Line</span>
-        <span class="example-spacer"></span>
-        <button (click)="prueba()"><mat-icon class="example-icon" aria-hidden="false"
-            aria-label="Example user verified icon">verified_user</mat-icon></button>
+        <span>Reconocimiento de personas</span>
     </mat-toolbar-row>
 </mat-toolbar>
+<div fxLayout="column" style="padding: 1rem 3rem 1rem 3rem;" *ngIf="!isLoading" fxLayoutGap="1rem">
+
+    
+    <div fxLayout="row" fxLayoutGap="1rem" fxFlex="100">
+        <mat-card class="mat-elevation-z1" fxFlex="30" style="padding: 1rem;">
+            <h3>Persona identificada</h3>
+            <img src="https://rekognition-face-video-poc.s3.amazonaws.com/diana.jpg" class="size-image">
+        </mat-card>
+        <mat-card class="mat-elevation-z1" fxFlex="70" style="padding: 1rem;">
+            <div fxLayout="column" fxLayoutGap="1rem">
+                <h3>Video</h3>
+                <video #video_recokgnition
+                    src="https://rekognition-face-video-poc.s3.amazonaws.com/video-rekognition-poc.mov"
+                    class="size-image"></video>
+                    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="1rem">
+                        <button mat-raised-button color="primary" (click)="playPause()">Play/Pause</button>
+                        <button mat-raised-button color="primary" (click)="restart();">Restart</button>
+                    <!-- <button mat-raised-button (click)="skip(-10)">Rewind</button>
+                        <button mat-raised-button (click)="skip(10)">Fastforward</button> -->
+                </div>
+            </div>
+        </mat-card>
+    </div>
+    
+    <div fxLayout="row" fxLayoutAlign="center center">
+        <mat-card class="mat-elevation-z1" style="padding: 1rem;">
+            <h3>Persona identificada en (min)</h3>
+            <mat-chip-grid>
+                <mat-chip *ngFor="let person of persons" (click)="setTime(person.Timestamp)">{{person.Timestamp}}
+                </mat-chip>
+            </mat-chip-grid>
+        </mat-card>
+    </div>
+
+</div>

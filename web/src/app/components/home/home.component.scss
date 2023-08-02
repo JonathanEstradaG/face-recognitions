@@ -1,3 +1,23 @@
-.example-spacer {
-    flex: 1 1 auto;
-  }
+
+.size-image {
+    height: calc(69vh - 200px);
+}
+
+.container-index{
+    background-color: black;
+    position: relative;
+    z-index: 0;
+}
+
+.progress {
+    background-color: red;
+    position: absolute;
+    z-index: 1;
+}
+
+.progress-minutes {
+    background-color: blue;
+    position: absolute;
+    z-index: 2;
+}
+
