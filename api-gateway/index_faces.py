@@ -5,8 +5,6 @@ import boto3
 
 def add_faces_to_collection(bucket, photo, collection_id):
 
-
-    
     client=boto3.client('rekognition')
 
     response = client.index_faces(

@@ -48,6 +48,7 @@ class VideoDetect:
                                         MaxResults=maxResults,
                                         NextToken=paginationToken)
 
+            print(response)
             print(response['Persons'])
             print(response['VideoMetadata']['Codec'])
             print(str(response['VideoMetadata']['DurationMillis']))

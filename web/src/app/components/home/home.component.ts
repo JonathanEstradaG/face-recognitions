@@ -1,10 +1,6 @@
 
-import {
-  Component, ElementRef, OnInit, ViewChild, AfterViewInit
-} from '@angular/core';
-import {
-  FaceServices
-} from 'src/app/services/face.services';
+import { Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { FaceServices } from 'src/app/services/face.services';
 
 @Component({
   selector: 'app-home',
@@ -12,13 +8,14 @@ import {
   styleUrls: ['./home.component.scss'
   ],
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent implements OnInit {
 
   isLoading = true;
   videos: any[] = [];
   isPlay: boolean = false;
   duration: number = 0;
   leftPercentage: number = 100;
+  arrayDurations: any[] = [];
   @ViewChild('video_recokgnition') videoRecokgnition: ElementRef<HTMLVideoElement> | undefined;
 
   persons = [
@@ -35,14 +32,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public faceServices: FaceServices
   ) { }
 
-  ngAfterViewInit(): void {
-    console.log(this.videoRecokgnition)
-  }
-
-
   ngOnInit(): void {
+    /* this.prueba() */
+    this.isLoading = false
     this.convert()
-    this.prueba()
   }
 
   prueba() {
@@ -55,17 +48,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   convert() {
-    const filterData: any[] = this.persons.map((person) => {
+    this.persons.forEach(person => {
       if (person.FaceMatches.length > 0) {
-        const remainingMiliSeconds = Math.floor(person.Timestamp / (60));
         const remainingSeconds = Math.floor(person.Timestamp / (1000));
-        person.Timestamp = parseFloat(remainingSeconds + '.' + remainingMiliSeconds)
-        return person
-      } else {
-        return null
+        const findTime = this.arrayDurations.find(a => Math.floor(a) === remainingSeconds)
+        if (findTime === undefined) this.arrayDurations.push(person.Timestamp / (1000))
       }
-    })
-    this.persons = filterData.filter(a => a !== null)
+    });
+    let suma = 0
+    this.arrayDurations.forEach((duration, index) => {
+      const result = this.arrayDurations[index] - this.arrayDurations[index - 1]
+      if (result < 1.5) {
+        suma += this.arrayDurations[index] - this.arrayDurations[index - 1]
+      }
+      console.log('///////////////////////')
+      console.log(index)
+      console.log(duration)
+      console.log(result)
+      console.log(suma)
+      console.log('///////////////////////')
+    });
   }
 
   playPause() {
@@ -73,6 +75,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.videoRecokgnition?.nativeElement.paused) this.videoRecokgnition.nativeElement.play();
     else this.videoRecokgnition!.nativeElement.pause();
   }
+
   /* skip(value: any) {   
     this.videoRecokgnition!.nativeElement.currentTime += value;
   } */

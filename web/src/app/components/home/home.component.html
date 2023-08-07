@@ -30,11 +30,10 @@
     <div fxLayout="row" fxLayoutAlign="center center">
         <mat-card class="mat-elevation-z1" style="padding: 1rem;">
             <h3>Persona identificada en (min)</h3>
-            <mat-chip-grid>
-                <mat-chip *ngFor="let person of persons" (click)="setTime(person.Timestamp)">{{person.Timestamp}}
+            <mat-chip-listbox>
+                <mat-chip *ngFor="let duration of arrayDurations" (click)="setTime(duration)">{{duration}}
                 </mat-chip>
-            </mat-chip-grid>
+            </mat-chip-listbox>
         </mat-card>
     </div>
-
 </div>
