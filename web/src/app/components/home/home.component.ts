@@ -1,5 +1,5 @@
 
-import { Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FaceServices } from 'src/app/services/face.services';
 
 @Component({
@@ -10,13 +10,27 @@ import { FaceServices } from 'src/app/services/face.services';
 })
 export class HomeComponent implements OnInit {
 
+  totalTimeOnVideo = 0;
   isLoading = true;
   videos: any[] = [];
   isPlay: boolean = false;
   duration: number = 0;
-  leftPercentage: number = 100;
+  leftPercentage: number = 0;
   arrayDurations: any[] = [];
+  currentTime: number = 0;
+  timeLapses: any[] = [];
+  selectTime: number = -1;
   @ViewChild('video_recokgnition') videoRecokgnition: ElementRef<HTMLVideoElement> | undefined;
+
+  VideoMetadata = {
+    Codec: 'h264',
+    DurationMillis: 47633,
+    Format: 'QuickTime / MOV',
+    FrameRate: 29.9580135345459,
+    FrameHeight: 1280,
+    FrameWidth: 720,
+    ColorRange: 'LIMITED'
+  }
 
   persons = [
     { 'Timestamp': 0, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.2971683144569397, 'Height': 0.2191585749387741, 'Left': 0.32991546392440796, 'Top': 0.28985679149627686 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.37728869915008545, 'Y': 0.37525874376296997 }, { 'Type': 'eyeRight', 'X': 0.500177800655365, 'Y': 0.3776663839817047 }, { 'Type': 'mouthLeft', 'X': 0.39228901267051697, 'Y': 0.4541648328304291 }, { 'Type': 'mouthRight', 'X': 0.4950874447822571, 'Y': 0.45654916763305664 }, { 'Type': 'nose', 'X': 0.4101168215274811, 'Y': 0.4258735179901123 }], 'Pose': { 'Roll': -3.5616555213928223, 'Yaw': -17.68640899658203, 'Pitch': -9.423567771911621 }, 'Quality': { 'Brightness': 68.7525634765625, 'Sharpness': 73.32209777832031 }, 'Confidence': 99.99925231933594 } }, 'FaceMatches': [] }, { 'Timestamp': 467, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.2950378358364105, 'Height': 0.21776428818702698, 'Left': 0.3329901695251465, 'Top': 0.2884964942932129 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.36621978878974915, 'Y': 0.37514883279800415 }, { 'Type': 'eyeRight', 'X': 0.4629574120044708, 'Y': 0.3817523717880249 }, { 'Type': 'mouthLeft', 'X': 0.3860773742198944, 'Y': 0.4524895250797272 }, { 'Type': 'mouthRight', 'X': 0.4668805003166199, 'Y': 0.4587427079677582 }, { 'Type': 'nose', 'X': 0.36492276191711426, 'Y': 0.42889460921287537 }], 'Pose': { 'Roll': 3.4410452842712402, 'Yaw': -39.164772033691406, 'Pitch': -17.468975067138672 }, 'Quality': { 'Brightness': 67.52367401123047, 'Sharpness': 67.22731018066406 }, 'Confidence': 99.99919128417969 } }, 'FaceMatches': [] }, { 'Timestamp': 968, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.21941417455673218, 'Height': 0.1797235906124115, 'Left': 0.28071221709251404, 'Top': 0.316633939743042 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.3259356617927551, 'Y': 0.3872655928134918 }, { 'Type': 'eyeRight', 'X': 0.344561368227005, 'Y': 0.38874179124832153 }, { 'Type': 'mouthLeft', 'X': 0.3610049784183502, 'Y': 0.4523877501487732 }, { 'Type': 'mouthRight', 'X': 0.375654935836792, 'Y': 0.454812616109848 }, { 'Type': 'nose', 'X': 0.2901914715766907, 'Y': 0.430571973323822 }], 'Pose': { 'Roll': -4.5220441818237305, 'Yaw': -77.96797943115234, 'Pitch': -15.352602005004883 }, 'Quality': { 'Brightness': 67.48146057128906, 'Sharpness': 73.32209777832031 }, 'Confidence': 99.98019409179688 } }, 'FaceMatches': [] }, { 'Timestamp': 1468, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.23575279116630554, 'Height': 0.1810033619403839, 'Left': 0.2648727297782898, 'Top': 0.32692214846611023 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.30830374360084534, 'Y': 0.39853790402412415 }, { 'Type': 'eyeRight', 'X': 0.3370838761329651, 'Y': 0.40373969078063965 }, { 'Type': 'mouthLeft', 'X': 0.3469120264053345, 'Y': 0.4614628255367279 }, { 'Type': 'mouthRight', 'X': 0.3703581988811493, 'Y': 0.4670054018497467 }, { 'Type': 'nose', 'X': 0.2791125774383545, 'Y': 0.44437074661254883 }], 'Pose': { 'Roll': 29.10811996459961, 'Yaw': -71.60481262207031, 'Pitch': -52.10116958618164 }, 'Quality': { 'Brightness': 68.5080337524414, 'Sharpness': 60.49041748046875 }, 'Confidence': 99.9949951171875 } }, 'FaceMatches': [] }, { 'Timestamp': 1969, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.21328337490558624, 'Height': 0.1749482899904251, 'Left': 0.21523725986480713, 'Top': 0.34174636006355286 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.25768497586250305, 'Y': 0.40951937437057495 }, { 'Type': 'eyeRight', 'X': 0.26974520087242126, 'Y': 0.41242140531539917 }, { 'Type': 'mouthLeft', 'X': 0.30545714497566223, 'Y': 0.46991342306137085 }, { 'Type': 'mouthRight', 'X': 0.31464019417762756, 'Y': 0.47356027364730835 }, { 'Type': 'nose', 'X': 0.23184418678283691, 'Y': 0.4519254267215729 }], 'Pose': { 'Roll': 1.9871246814727783, 'Yaw': -80.60765075683594, 'Pitch': -25.814064025878906 }, 'Quality': { 'Brightness': 72.9673080444336, 'Sharpness': 78.64350128173828 }, 'Confidence': 99.94175720214844 } }, 'FaceMatches': [] }, { 'Timestamp': 2470, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.22356456518173218, 'Height': 0.1747680902481079, 'Left': 0.24046367406845093, 'Top': 0.35079333186149597 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.2775819003582001, 'Y': 0.41465163230895996 }, { 'Type': 'eyeRight', 'X': 0.30776241421699524, 'Y': 0.42434653639793396 }, { 'Type': 'mouthLeft', 'X': 0.3112826645374298, 'Y': 0.4770886301994324 }, { 'Type': 'mouthRight', 'X': 0.33588582277297974, 'Y': 0.48636919260025024 }, { 'Type': 'nose', 'X': 0.24799306690692902, 'Y': 0.46057939529418945 }], 'Pose': { 'Roll': 36.29026794433594, 'Yaw': -68.43684387207031, 'Pitch': -56.88499069213867 }, 'Quality': { 'Brightness': 68.49617004394531, 'Sharpness': 67.22731018066406 }, 'Confidence': 99.99491119384766 } }, 'FaceMatches': [] }, { 'Timestamp': 2970, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.24720127880573273, 'Height': 0.1791990101337433, 'Left': 0.25810444355010986, 'Top': 0.36798393726348877 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.297244668006897, 'Y': 0.43356937170028687 }, { 'Type': 'eyeRight', 'X': 0.3338249921798706, 'Y': 0.4487481117248535 }, { 'Type': 'mouthLeft', 'X': 0.33193930983543396, 'Y': 0.4976235032081604 }, { 'Type': 'mouthRight', 'X': 0.36189451813697815, 'Y': 0.5115147829055786 }, { 'Type': 'nose', 'X': 0.26799556612968445, 'Y': 0.4829196035861969 }], 'Pose': { 'Roll': 44.254066467285156, 'Yaw': -60.898189544677734, 'Pitch': -65.83464050292969 }, 'Quality': { 'Brightness': 62.43516159057617, 'Sharpness': 73.32209777832031 }, 'Confidence': 99.99710083007812 } }, 'FaceMatches': [] }, { 'Timestamp': 3471, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.24976061284542084, 'Height': 0.18373815715312958, 'Left': 0.24067451059818268, 'Top': 0.36105677485466003 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.2811373770236969, 'Y': 0.4327654242515564 }, { 'Type': 'eyeRight', 'X': 0.31684044003486633, 'Y': 0.4481510519981384 }, { 'Type': 'mouthLeft', 'X': 0.3210257589817047, 'Y': 0.49641481041908264 }, { 'Type': 'mouthRight', 'X': 0.35036230087280273, 'Y': 0.5105484127998352 }, { 'Type': 'nose', 'X': 0.25304776430130005, 'Y': 0.48466816544532776 }], 'Pose': { 'Roll': 41.3270378112793, 'Yaw': -62.19724655151367, 'Pitch': -63.321590423583984 }, 'Quality': { 'Brightness': 63.46058654785156, 'Sharpness': 78.64350128173828 }, 'Confidence': 99.99690246582031 } }, 'FaceMatches': [] }, { 'Timestamp': 3972, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.2461259663105011, 'Height': 0.18439945578575134, 'Left': 0.2547281086444855, 'Top': 0.35463494062423706 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.29849833250045776, 'Y': 0.42514872550964355 }, { 'Type': 'eyeRight', 'X': 0.3300994634628296, 'Y': 0.43600550293922424 }, { 'Type': 'mouthLeft', 'X': 0.3353983461856842, 'Y': 0.491178423166275 }, { 'Type': 'mouthRight', 'X': 0.36107105016708374, 'Y': 0.5014845132827759 }, { 'Type': 'nose', 'X': 0.2674103379249573, 'Y': 0.4739607870578766 }], 'Pose': { 'Roll': 36.773189544677734, 'Yaw': -66.60960388183594, 'Pitch': -57.36539840698242 }, 'Quality': { 'Brightness': 64.40011596679688, 'Sharpness': 60.49041748046875 }, 'Confidence': 99.99777221679688 } }, 'FaceMatches': [] }, { 'Timestamp': 4472, 'Person': { 'Index': 0, 'Face': { 'BoundingBox': { 'Width': 0.25561124086380005, 'Height': 0.1864027976989746, 'Left': 0.24550899863243103, 'Top': 0.37322717905044556 }, 'Landmarks': [{ 'Type': 'eyeLeft', 'X': 0.28453871607780457, 'Y': 0.44148507714271545 }, { 'Type': 'eyeRight', 'X': 0.3296319246292114, 'Y': 0.4562644064426422 }, { 'Type': 'mouthLeft', 'X': 0.3187407851219177, 'Y': 0.507887601852417 }, { 'Type': 'mouthRight', 'X': 0.3560585379600525, 'Y': 0.521506667137146 }, { 'Type': 'nose', 'X': 0.256209135055542, 'Y': 0.49351972341537476 }], 'Pose': { 'Roll': 37.21688461303711, 'Yaw': -57.83559799194336, 'Pitch': -59.52595901489258 }, 'Quality': { 'Brightness': 64.89106750488281, 'Sharpness': 32.20803451538086 }, 'Confidence': 99.99894714355469 } }, 'FaceMatches': [] },
@@ -34,51 +48,69 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     /* this.prueba() */
-    this.isLoading = false
-    this.convert()
+    this.isLoading = false;
+    this.convert();
   }
 
   prueba() {
     this.faceServices.getAll().subscribe((res: any) => {
       if (res.ListBucketResult !== undefined) {
-        this.videos = res.ListBucketResult.Contents
-        this.isLoading = false
+        this.videos = res.ListBucketResult.Contents;
+        this.isLoading = false;
       }
     });
   }
 
   convert() {
+    this.totalTimeOnVideo = 0;
+    this.timeLapses = [];
+    let initialTime = 0
     this.persons.forEach(person => {
       if (person.FaceMatches.length > 0) {
-        const remainingSeconds = Math.floor(person.Timestamp / (1000));
-        const findTime = this.arrayDurations.find(a => Math.floor(a) === remainingSeconds)
-        if (findTime === undefined) this.arrayDurations.push(person.Timestamp / (1000))
+        const remainingSeconds = Math.floor(person.Timestamp / 1000);
+        const findTime = this.arrayDurations.find(a => Math.floor(a) === remainingSeconds);
+        if (findTime === undefined) this.arrayDurations.push(person.Timestamp / 1000);
       }
     });
-    let suma = 0
     this.arrayDurations.forEach((duration, index) => {
-      const result = this.arrayDurations[index] - this.arrayDurations[index - 1]
-      if (result < 1.5) {
-        suma += this.arrayDurations[index] - this.arrayDurations[index - 1]
+      if(initialTime === 0){
+        initialTime = duration;
       }
-      console.log('///////////////////////')
-      console.log(index)
-      console.log(duration)
-      console.log(result)
-      console.log(suma)
-      console.log('///////////////////////')
+      const result = duration - this.arrayDurations[index - 1];
+      if(result >= 1.5){
+        this.timeLapses.push({
+          initial: initialTime,
+          end: this.arrayDurations[index - 1]
+        })
+        initialTime = duration;
+      }
+
+      if (result < 1.5) {
+        this.totalTimeOnVideo += duration - this.arrayDurations[index - 1];
+        
+      }
+      if (this.arrayDurations[index + 1] === undefined) {
+        const prueba = (this.VideoMetadata.DurationMillis / 1000) - duration;
+        this.totalTimeOnVideo += prueba;
+        if(initialTime > 0 ){
+          this.timeLapses.push({
+            initial: initialTime,
+            end: (this.VideoMetadata.DurationMillis / 1000)
+          })
+        }
+      }
     });
   }
 
   playPause() {
-    this.duration = this.videoRecokgnition!.nativeElement.duration
+    this.duration = this.videoRecokgnition!.nativeElement.duration;
     if (this.videoRecokgnition?.nativeElement.paused) this.videoRecokgnition.nativeElement.play();
     else this.videoRecokgnition!.nativeElement.pause();
   }
 
-  /* skip(value: any) {   
+  skip(value: any) {
     this.videoRecokgnition!.nativeElement.currentTime += value;
-  } */
+  }
 
   restart() {
     this.videoRecokgnition!.nativeElement.currentTime = 0;
@@ -86,5 +118,14 @@ export class HomeComponent implements OnInit {
 
   setTime(value: any) {
     this.videoRecokgnition!.nativeElement.currentTime = value;
+  }
+
+  setCurrentTime(data: any) {
+    this.currentTime = data.target.currentTime * 1000;
+    this.leftPercentage = (this.currentTime * 100) / this.VideoMetadata.DurationMillis;
+  }
+
+  select(index: number){
+    this.selectTime = index
   }
 }

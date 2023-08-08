@@ -3,9 +3,12 @@
         <span>Reconocimiento de personas</span>
     </mat-toolbar-row>
 </mat-toolbar>
+
+
+
 <div fxLayout="column" style="padding: 1rem 3rem 1rem 3rem;" *ngIf="!isLoading" fxLayoutGap="1rem">
 
-    
+
     <div fxLayout="row" fxLayoutGap="1rem" fxFlex="100">
         <mat-card class="mat-elevation-z1" fxFlex="30" style="padding: 1rem;">
             <h3>Persona identificada</h3>
@@ -13,27 +16,53 @@
         </mat-card>
         <mat-card class="mat-elevation-z1" fxFlex="70" style="padding: 1rem;">
             <div fxLayout="column" fxLayoutGap="1rem">
-                <h3>Video</h3>
-                <video #video_recokgnition
-                    src="https://rekognition-face-video-poc.s3.amazonaws.com/video-rekognition-poc.mov"
-                    class="size-image"></video>
-                    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="1rem">
-                        <button mat-raised-button color="primary" (click)="playPause()">Play/Pause</button>
-                        <button mat-raised-button color="primary" (click)="restart();">Restart</button>
-                    <!-- <button mat-raised-button (click)="skip(-10)">Rewind</button>
-                        <button mat-raised-button (click)="skip(10)">Fastforward</button> -->
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <h3>Video</h3>
+                    <a>Total: <strong>{{(totalTimeOnVideo * 1000) | date:'mm:ss:SSS'}}</strong> min</a>
                 </div>
+                <video #video_recokgnition (timeupdate)="setCurrentTime($event)"
+                    src="https://rekognition-face-video-poc.s3.amazonaws.com/video-rekognition-poc.mov"
+                    class="size-video"></video>
+                <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="1rem">
+                    <button mat-icon-button color="primary" (click)="playPause()">
+                        <mat-icon *ngIf="videoRecokgnition?.nativeElement!.paused === true">play_circle</mat-icon>
+                        <mat-icon *ngIf="!videoRecokgnition?.nativeElement!.paused === true">pause_circle</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" (click)="restart();">
+                        <mat-icon>replay_circle_filled</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="skip(-5)">
+                        <mat-icon>replay_5</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="skip(5)">
+                        <mat-icon>forward_5</mat-icon>
+                    </button>
+                </div>
+                <div fxLayout="row" fxLayoutGap="1rem" fxLayoutAlign="space-between center">
+                    <a>{{ currentTime | date:'mm:ss'}}</a>
+                    <a>{{ VideoMetadata.DurationMillis | date:'mm:ss'}}</a>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-left" [ngStyle]="{'width': leftPercentage + '%'}">
+                    </div>
+                    <div class="indicator-container" *ngFor="let duration of arrayDurations let i = index"
+                        [ngStyle]="{'width': (((duration * 1000) * 100) / this.VideoMetadata.DurationMillis) + '%'}">
+                        <div class="indicator"
+                            [ngStyle]="{'border-top': selectTime === i ? '8px solid #06b700': '8px solid #1A374D'}">
+                        </div>
+                        <!--   <h5 class="indicator-text">{{ duration }}</h5> -->
+                    </div>
+                    <div class="progress-person" *ngFor="let time of timeLapses"
+                        [ngStyle]="{'width': ((((time.end * 1000) - (time.initial * 1000)) * 100) / this.VideoMetadata.DurationMillis ) + '%', 'left': (((time.initial * 1000) * 100) / this.VideoMetadata.DurationMillis)  + '%'}">
+                    </div>
+                </div>
+
+                <mat-chip-listbox>
+                    <mat-chip-option *ngFor="let duration of arrayDurations let i = index" (click)="setTime(duration)"
+                        (click)="select(i)">{{duration}}
+                    </mat-chip-option>
+                </mat-chip-listbox>
             </div>
-        </mat-card>
-    </div>
-    
-    <div fxLayout="row" fxLayoutAlign="center center">
-        <mat-card class="mat-elevation-z1" style="padding: 1rem;">
-            <h3>Persona identificada en (min)</h3>
-            <mat-chip-listbox>
-                <mat-chip *ngFor="let duration of arrayDurations" (click)="setTime(duration)">{{duration}}
-                </mat-chip>
-            </mat-chip-listbox>
         </mat-card>
     </div>
 </div>
